@@ -40,11 +40,6 @@ function TweetListContextProvider({ children }) {
 
     }, [username]);
 
-    useEffect(() => {
-        setInterval(function () {
-            getFromServer();
-        }, 30000);
-    });
 
     return (
         <TweetListContext.Provider value={{ tweetList, setTweetList, tweetDetails, setTweetDetails }}>
