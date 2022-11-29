@@ -6,16 +6,19 @@ import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 import "./Blog.css";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import TweetItem from '../components/TweetItem';
-import localForage from "localforage";
+import { TweetListContext } from '../context/TweetListContext';
+import { UserContext } from '../context/UserContext';
+import { NewTweetContext } from '../context/NewTweetContext';
 
 function Blog() {
-    const [username, setUsername] = useState();
+    const { username } = useContext(UserContext);
+    const { tweetList, tweetDetails } = useContext(TweetListContext);
+    const { setNewTweet } = useContext(NewTweetContext);
+
     const [input, setInput] = useState();
-    const [tweetList, setTweetList] = useState([]);
     const [disabled, setDisabled] = useState(false);
-    const [tweetDetails, setTweetDetails] = useState(false)
 
     const onInputChangeMethod = (eventArgs) => {
         const currentInput = eventArgs.target.value;
@@ -43,70 +46,14 @@ function Blog() {
         setInput('');
 
         setDisabled(true);
-        addTweetToServer(tweet);
+        setNewTweet(tweet);
         setDisabled(false);
     }
 
-    const addTweetToServer = async (tweet) => {
-        try {
-            const response = await fetch('https://micro-blogging-dot-full-stack-course-services.ew.r.appspot.com/tweet', {
-                method: 'POST',
-                body: JSON.stringify(tweet),
-                headers: {
-                    'Content-type': 'application/json; charset=UTF-8',
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error("Can't add new tweet to server");
-            }
-
-            setTweetList([...tweetList, tweet]);
-
-        } catch (error) {
-            alert(error);
-        }
-    }
-
-    async function getFromForage() {
-        const user = await localForage.getItem('username');
-        if (user) {
-            setUsername(user);
-        }
-    }
-
     useEffect(() => {
-        getFromForage();
-        getFromServer();
+        renderTweetList();
 
-    }, []);
-
-    useEffect(() => {
-        getFromServer();
-
-    }, [username]);
-
-    const getFromServer = async () => {
-        try {
-            const response = await fetch("https://micro-blogging-dot-full-stack-course-services.ew.r.appspot.com/tweet");
-
-            if (!response.ok) {
-                throw Error("Oops..something went wrong");
-            }
-
-            const results = await response.json();
-
-            const filteredTweets = (results.tweets).filter(tweet => {
-                return tweet.userName === username;
-            });
-
-            setTweetList(filteredTweets);
-            setTweetDetails(true);
-
-        } catch (error) {
-            alert(error);
-        }
-    }
+    }, [tweetList]);
 
     const sortTweets = () => {
         tweetList.sort((tweetA, tweetB) => (tweetA.date < tweetB.date) ? 1 : -1);

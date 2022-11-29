@@ -5,29 +5,15 @@ import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import "./Login.css";
 import { useNavigate } from 'react-router-dom';
-import localForage from "localforage";
-import { useState, useEffect } from "react";
+import { useContext } from "react";
+import { UserContext } from '../context/UserContext';
 
 function Login() {
-    const [username, setUsername] = useState('');
+    const { username, setUsername } = useContext(UserContext);
 
     const navigate = useNavigate();
 
-    async function getFromForage() {
-        const user = await localForage.getItem('username');
-        if (user) {
-            setUsername(user);
-        }
-    }
-
-    useEffect(() => {
-        getFromForage();
-
-    }, [])
-
     const showTweetsPage = () => {
-        localForage.setItem('username', username);
-
         navigate('/home');
     }
 
