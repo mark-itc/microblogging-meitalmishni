@@ -7,14 +7,13 @@ import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 import "./Blog.css";
 import { useState, useEffect } from 'react';
-import localForage from "localforage";
 import TweetItem from '../components/TweetItem';
-
 
 function Blog() {
     const [input, setInput] = useState();
     const [tweetList, setTweetList] = useState([]);
     const [disabled, setDisabled] = useState(false);
+    const [tweetDetails, setTweetDetails] = useState(false)
 
     const onInputChangeMethod = (eventArgs) => {
         const currentInput = eventArgs.target.value;
@@ -34,44 +33,78 @@ function Blog() {
         const now = new Date().toISOString();
 
         const tweet = {
-            username: "Username",
+            content: input,
+            userName: "Username",
             date: now,
-            text: input,
         }
 
-        setTweetList([...tweetList, tweet]);
         setInput('');
+
+        setDisabled(true);
+        addTweetToServer(tweet);
+        setDisabled(false);
     }
 
-    async function getFromForage() {
-        const savedItems = await localForage.getItem('tweets-list');
+    const addTweetToServer = async (tweet) => {
+        try {
+            const response = await fetch('https://micro-blogging-dot-full-stack-course-services.ew.r.appspot.com/tweet', {
+                method: 'POST',
+                body: JSON.stringify(tweet),
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8',
+                },
+            });
 
-        if (savedItems) {
-            setTweetList(JSON.parse(savedItems))
+            if (!response.ok) {
+                throw new Error("Can't add new tweet to server");
+            }
+
+            setTweetList([...tweetList, tweet]);
+
+        } catch (error) {
+            alert(error);
         }
     }
 
     useEffect(() => {
-        if (tweetList.length > 0) {
-            localForage.setItem('tweets-list', JSON.stringify(tweetList));
-        }
-
-    }, [tweetList]);
-
-    useEffect(() => {
-        getFromForage()
+        getFromServer();
     }, []);
 
-    const renderTweetList = () => {
+    const getFromServer = async () => {
+        try {
+            const response = await fetch("https://micro-blogging-dot-full-stack-course-services.ew.r.appspot.com/tweet");
 
+            if (!response.ok) {
+                throw Error("Oops..something went wrong");
+            }
+
+            const results = await response.json();
+
+            const filteredTweets = (results.tweets).filter(tweet => {
+                return tweet.userName === 'Username';
+            });
+
+            setTweetList(filteredTweets);
+            setTweetDetails(true);
+
+        } catch (error) {
+            alert(error);
+        }
+    }
+
+    const sortTweets = () => {
         tweetList.sort((tweetA, tweetB) => (tweetA.date < tweetB.date) ? 1 : -1);
+    }
+
+    const renderTweetList = () => {
+        sortTweets();
 
         return tweetList.map((tweet, index) => {
             return (<TweetItem
                 key={`tweet-item-${index}`}
-                username={tweet.username}
+                username={tweet.userName}
                 date={tweet.date}
-                text={tweet.text} />)
+                text={tweet.content} />)
         })
     }
 
@@ -92,7 +125,7 @@ function Blog() {
                                 />
                             </Card.Body>
 
-                            <div style={{ display: 'flex' }}>
+                            <div className="flex-content">
                                 {disabled ?
                                     <div className="error">
                                         <p>The tweet can't contain more then 140 chars.</p>
@@ -104,9 +137,13 @@ function Blog() {
                         </Card>
                     </Form>
 
-                    <div className='search-results'>
+                    <div>
                         {
-                            tweetList.length > 0 ? renderTweetList() : <div style={{ color: 'white' }}>No tweets</div>
+                            tweetDetails ?
+                                (
+                                    tweetList.length > 0 ? renderTweetList() : null
+                                )
+                                : (<h5 className="white-text">Loading...</h5>)
                         }
                     </div>
 

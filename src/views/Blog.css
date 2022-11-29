@@ -24,6 +24,10 @@
     bottom: 10%;
 }
 
+.white-text {
+    color: white;
+}
+
 .error {
     background: #F8D7DA;
     border: 1px solid #F5C6CB;
@@ -40,4 +44,8 @@
     font-weight: 500;
     font-size: 16px;
     margin: 0;
+}
+
+.flex-content {
+    display: flex;
 }
