@@ -1,0 +1,43 @@
+.custom-card {
+    height: 10rem;
+    border: 2px solid #CCCCCC;
+    background: #15202B;
+}
+
+.custom-textarea {
+    height: 98%;
+    border: none;
+    background: #15202B;
+    color: #CCCCCC;
+}
+
+.custom-textarea:focus {
+    border: none;
+    background: #15202B;
+    color: #CCCCCC;
+}
+
+.custom-button {
+    width: 14%;
+    position: relative;
+    left: 84%;
+    bottom: 10%;
+}
+
+.error {
+    background: #F8D7DA;
+    border: 1px solid #F5C6CB;
+    border-radius: 4px;
+    left: 3%;
+    bottom: 10%;
+    position: absolute;
+    height: 20%;
+    width: 65%;
+}
+
+.error p {
+    color: #721C24;
+    font-weight: 500;
+    font-size: 16px;
+    margin: 0;
+}
