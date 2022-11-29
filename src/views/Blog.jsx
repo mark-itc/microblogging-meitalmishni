@@ -8,8 +8,10 @@ import Form from 'react-bootstrap/Form';
 import "./Blog.css";
 import { useState, useEffect } from 'react';
 import TweetItem from '../components/TweetItem';
+import localForage from "localforage";
 
 function Blog() {
+    const [username, setUsername] = useState();
     const [input, setInput] = useState();
     const [tweetList, setTweetList] = useState([]);
     const [disabled, setDisabled] = useState(false);
@@ -34,7 +36,7 @@ function Blog() {
 
         const tweet = {
             content: input,
-            userName: "Username",
+            userName: username,
             date: now,
         }
 
@@ -66,9 +68,23 @@ function Blog() {
         }
     }
 
+    async function getFromForage() {
+        const user = await localForage.getItem('username');
+        if (user) {
+            setUsername(user);
+        }
+    }
+
+    useEffect(() => {
+        getFromForage();
+        getFromServer();
+
+    }, []);
+
     useEffect(() => {
         getFromServer();
-    }, []);
+
+    }, [username]);
 
     const getFromServer = async () => {
         try {
@@ -81,7 +97,7 @@ function Blog() {
             const results = await response.json();
 
             const filteredTweets = (results.tweets).filter(tweet => {
-                return tweet.userName === 'Username';
+                return tweet.userName === username;
             });
 
             setTweetList(filteredTweets);
@@ -146,7 +162,6 @@ function Blog() {
                                 : (<h5 className="white-text">Loading...</h5>)
                         }
                     </div>
-
                 </Col>
             </Row>
         </Container >

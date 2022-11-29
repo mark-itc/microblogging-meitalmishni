@@ -1,0 +1,28 @@
+.login-form {
+    color: white;
+    text-align: left;
+    font-weight: 400;
+    font-size: 18px;
+}
+
+.login-form h1 {
+    font-weight: 400;
+    font-size: 36px;
+}
+
+.col-form {
+    position: relative;
+}
+
+.username-text {
+    border: 2px solid #CCCCCC;
+    border-radius: 6px;
+    background: #15202B;
+    color: #FFFFFF;
+    height: 3rem;
+}
+
+.custom-login-button {
+    position: absolute;
+    right: 2%;
+}

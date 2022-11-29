@@ -33,6 +33,23 @@ html {
   color: #61dafb;
 }
 
+.navbar {
+  background: #343A40;
+  margin-bottom: 50px;
+}
+
+.navbar .me-auto {
+  gap: 30%;
+}
+
+.navbar-link {
+  color: #FFFFFF !important;
+}
+
+.navbar-row {
+  margin: 0;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
