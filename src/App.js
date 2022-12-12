@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import Blog from "./views/Blog"
 import Login from "./views/Login"
 import { Routes, Route } from 'react-router-dom'
@@ -10,8 +9,6 @@ import Navbar from 'react-bootstrap/Navbar';
 import './App.css';
 
 function App() {
-  const [username, setUsername] = useState();
-
   return (
     <div className="App">
       <Row className="justify-content-md-center navbar-row">
@@ -28,9 +25,9 @@ function App() {
       </Row>
 
       <Routes>
-        <Route path='/home' element={<Blog username={username} setUsername={setUsername} />} />
-        <Route path='/' element={<Login username={username} setUsername={setUsername} />} />
-        <Route path='/profile' element={<Login username={username} setUsername={setUsername} />} />
+        <Route path='/home' element={<Blog />} />
+        <Route path='/' element={<Login />} />
+        <Route path='/profile' element={<Login />} />
       </Routes>
     </div>
   );

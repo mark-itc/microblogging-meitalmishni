@@ -5,16 +5,16 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
-import "./Blog.css";
 import { useState, useEffect, useContext } from 'react';
 import TweetItem from '../components/TweetItem';
 import { TweetListContext } from '../context/TweetListContext';
 import { UserContext } from '../context/UserContext';
 import { NewTweetContext } from '../context/NewTweetContext';
+import "./Blog.css";
 
 function Blog() {
     const { username } = useContext(UserContext);
-    const { tweetList, tweetDetails } = useContext(TweetListContext);
+    const { tweetList, isTweetsLoaded } = useContext(TweetListContext);
     const { setNewTweet } = useContext(NewTweetContext);
 
     const [input, setInput] = useState();
@@ -36,7 +36,6 @@ function Blog() {
         e.preventDefault();
 
         const now = new Date().toISOString();
-
         const tweet = {
             content: input,
             userName: username,
@@ -44,7 +43,6 @@ function Blog() {
         }
 
         setInput('');
-
         setDisabled(true);
         setNewTweet(tweet);
         setDisabled(false);
@@ -52,7 +50,6 @@ function Blog() {
 
     useEffect(() => {
         renderTweetList();
-
     }, [tweetList]);
 
     const sortTweets = () => {
@@ -70,7 +67,6 @@ function Blog() {
                 text={tweet.content} />)
         })
     }
-
 
     return (
         <Container>
@@ -102,7 +98,7 @@ function Blog() {
 
                     <div>
                         {
-                            tweetDetails ?
+                            isTweetsLoaded ?
                                 (
                                     tweetList.length > 0 ? renderTweetList() : null
                                 )

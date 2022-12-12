@@ -5,7 +5,7 @@ const UserContext = createContext();
 
 function UserContextProvider({ children }) {
 
-    const [username, setUsername] = useState();
+    const [username, setUsername] = useState('');
 
     async function getFromForage() {
         const user = await localForage.getItem('username');
@@ -20,7 +20,6 @@ function UserContextProvider({ children }) {
 
     useEffect(() => {
         localForage.setItem('username', username);
-
     }, [username]);
 
     return (

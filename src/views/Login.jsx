@@ -3,14 +3,13 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
-import "./Login.css";
 import { useNavigate } from 'react-router-dom';
 import { useContext } from "react";
 import { UserContext } from '../context/UserContext';
+import "./Login.css";
 
 function Login() {
     const { username, setUsername } = useContext(UserContext);
-
     const navigate = useNavigate();
 
     const showTweetsPage = () => {

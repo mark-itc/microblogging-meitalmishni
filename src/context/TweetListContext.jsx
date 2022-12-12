@@ -1,48 +1,34 @@
-import { createContext, useState, useEffect, useContext } from "react";
-import { UserContext } from './UserContext';
+import { createContext, useState, useEffect } from "react";
+import { getFromServer } from '../helpers/api';
 
 const TweetListContext = createContext();
 
 function TweetListContextProvider({ children }) {
-
     const [tweetList, setTweetList] = useState([]);
-    const [tweetDetails, setTweetDetails] = useState(false);
-    const { username } = useContext(UserContext);
+    const [isTweetsLoaded, setIsTweetsLoaded] = useState(false);
 
-    const getFromServer = async () => {
-        try {
-            const response = await fetch("https://micro-blogging-dot-full-stack-course-services.ew.r.appspot.com/tweet");
+    const fetchFromAPI = async () => {
+        const results = await getFromServer();
 
-            if (!response.ok) {
-                throw Error("Oops..something went wrong");
-            }
-
-            const results = await response.json();
-
-            const filteredTweets = (results.tweets).filter(tweet => {
-                return tweet.userName === username;
-            });
-
-            setTweetDetails(true);
-            setTweetList(filteredTweets);
-
-        } catch (error) {
-            alert(error);
+        if (results.success) {
+            setTweetList(results.data.tweets);
+            setIsTweetsLoaded(true);
+        } else {
+            alert(results.data)
         }
     }
 
     useEffect(() => {
-        getFromServer();
+        const interval = setInterval(() => {
+            setIsTweetsLoaded(false);
+            fetchFromAPI();
+        }, 10000);
+
+        return () => clearInterval(interval);
     }, []);
 
-    useEffect(() => {
-        getFromServer();
-
-    }, [username]);
-
-
     return (
-        <TweetListContext.Provider value={{ tweetList, setTweetList, tweetDetails, setTweetDetails }}>
+        <TweetListContext.Provider value={{ tweetList, setTweetList, isTweetsLoaded }}>
             {children}
         </TweetListContext.Provider>
     )
