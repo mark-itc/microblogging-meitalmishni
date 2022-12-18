@@ -13,12 +13,22 @@ import { NewTweetContext } from '../context/NewTweetContext';
 import "./Blog.css";
 
 function Blog() {
-    const { username } = useContext(UserContext);
+    const { user } = useContext(UserContext);
     const { tweetList, isTweetsLoaded } = useContext(TweetListContext);
     const { setNewTweet } = useContext(NewTweetContext);
 
     const [input, setInput] = useState();
     const [disabled, setDisabled] = useState(false);
+    const [uid, setUid] = useState('');
+
+    const fetchUserInfo = async () => {
+        const { uid } = user;
+        setUid(uid);
+    };
+
+    useEffect(() => {
+        fetchUserInfo();
+    }, []);
 
     const onInputChangeMethod = (eventArgs) => {
         const currentInput = eventArgs.target.value;
@@ -35,10 +45,10 @@ function Blog() {
     const submitHandler = (e) => {
         e.preventDefault();
 
-        const now = new Date().toISOString();
+        const now = new Date();
         const tweet = {
             content: input,
-            userName: username,
+            userName: uid,
             date: now,
         }
 
@@ -52,19 +62,22 @@ function Blog() {
         renderTweetList();
     }, [tweetList]);
 
-    const sortTweets = () => {
-        tweetList.sort((tweetA, tweetB) => (tweetA.date < tweetB.date) ? 1 : -1);
+    const convertDate = (time) => {
+        let fireBaseTime = time * 1000;
+        let date = new Date(fireBaseTime)
+        let dateFormat = new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString();
+        return dateFormat;
     }
 
     const renderTweetList = () => {
-        sortTweets();
+        return tweetList.map((tweet) => {
+            const date = convertDate(tweet.data.date.seconds);
 
-        return tweetList.map((tweet, index) => {
             return (<TweetItem
-                key={`tweet-item-${index}`}
-                username={tweet.userName}
-                date={tweet.date}
-                text={tweet.content} />)
+                key={tweet.id}
+                username={tweet.data.userName}
+                date={date}
+                text={tweet.data.content} />)
         })
     }
 

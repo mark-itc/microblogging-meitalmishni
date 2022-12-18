@@ -1,27 +1,28 @@
 import { createContext, useState, useEffect, useContext } from "react";
 import { TweetListContext } from './TweetListContext';
 import { addTweetToServer } from '../helpers/api';
+import { collection, addDoc } from "firebase/firestore";
+import { db } from '../firebase';
 
 const NewTweetContext = createContext();
 
 function NewTweetContextProvider({ children }) {
 
+    const tweetsCollectionRef = collection(db, "tweets");
     const [newTweet, setNewTweet] = useState();
-    const { tweetList, setTweetList } = useContext(TweetListContext);
 
-    const fetchToAPI = async () => {
-        const results = await addTweetToServer(newTweet);
-
-        if (results.success) {
-            setTweetList([...tweetList, newTweet]);
-        } else {
-            alert(results.message)
+    const addNewTweet = async () => {
+        try {
+            const response = await addDoc(tweetsCollectionRef, newTweet);
+        }
+        catch (error) {
+            alert(error);
         }
     }
 
     useEffect(() => {
         if (newTweet) {
-            fetchToAPI();
+            addNewTweet();
         }
     }, [newTweet]);
 
